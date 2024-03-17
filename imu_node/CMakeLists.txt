@@ -12,9 +12,7 @@ find_package(xsens_library REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 find_package(yaml_cpp_vendor REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)# uncomment the following section in order to fill in
-# further dependencies manually.
-# find_package(<dependency> REQUIRED)
+find_package(tf2_geometry_msgs REQUIRED)
 
 # find dependencies
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
@@ -23,7 +21,9 @@ endforeach()
 
 # let the compiler search for headers in the include folder
 set(MOVELLA_INSTALL_PREFIX /usr/local/movella/)
-include_directories(${MOVELLA_INSTALL_PREFIX}/include ${MOVELLA_INSTALL_PREFIX}/include/movelladot_pc_sdk ${CMAKE_CURRENT_SOURCE_DIR}/include/wallBE)
+include_directories(${MOVELLA_INSTALL_PREFIX}/include ${MOVELLA_INSTALL_PREFIX}/include/movelladot_pc_sdk)
+include_directories(${MOVELLA_INSTALL_PREFIX}/lib)
+
 link_directories(${MOVELLA_INSTALL_PREFIX}/lib)
 
 add_executable(imu_pub src/imu_publisher.cpp)

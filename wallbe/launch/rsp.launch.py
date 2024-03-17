@@ -34,7 +34,7 @@ def generate_launch_description():
         output='screen',
         parameters=[params],
         remappings=[
-            ("/diff_drive_controller/cmd_vel_unstamped", "/cmd_vel"),
+            ("/cmd_vel", "/cmd_vel_key"),
         ],
     )
 
