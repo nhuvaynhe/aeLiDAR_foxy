@@ -111,7 +111,7 @@ hardware_interface::return_type DiffDriveArduino::read()
     return return_type::ERROR;
   }
 
-  arduino_.readEncoderValues(r_wheel_.enc, l_wheel_.enc);
+  arduino_.readEncoderValues(l_wheel_.enc, r_wheel_.enc);
 
   double pos_prev = l_wheel_.pos;
   l_wheel_.pos = l_wheel_.calcEncAngle();
@@ -139,7 +139,7 @@ hardware_interface::return_type DiffDriveArduino::write()
   int motor_l_counts_per_loop = l_wheel_.cmd / l_wheel_.rads_per_count / cfg_.loop_rate;
   int motor_r_counts_per_loop = r_wheel_.cmd / r_wheel_.rads_per_count / cfg_.loop_rate; 
 
-  arduino_.setMotorValues(motor_r_counts_per_loop, motor_l_counts_per_loop);
+  arduino_.setMotorValues(motor_l_counts_per_loop, motor_r_counts_per_loop);
 
 
 

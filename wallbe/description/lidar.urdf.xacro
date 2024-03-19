@@ -5,14 +5,14 @@
     <joint name="joint_lidar" type="fixed">
         <parent link="base_link"/>
         <child link="lidar_frame"/>
-        <origin xyz="0.1263 0.045 0" rpy="0 0 0"/>      
+        <origin xyz="0.09 0 0" rpy="0 0 0"/>      
     </joint>
 
     <link name="lidar_frame">   
         <visual>
-            <origin xyz="0.0 0 0.1" rpy="${PI/2} 0 -${PI/2}"/>
+            <origin xyz="0.0 0 0.1" rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://wallBE/meshes/lidar.STL" scale="0.001 0.001 0.001"/>         
+                <cylinder length="0.03" radius="0.02"/>
             </geometry>
             <material name="blue"/>
         </visual>
