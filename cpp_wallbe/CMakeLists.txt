@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(wallbe)
+project(cpp_wallbe)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -16,13 +16,21 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 # find dependencies
-find_package(ament_cmake_python REQUIRED)
 find_package(ament_cmake REQUIRED)
-find_package(nav_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
 find_package(serial REQUIRED)
-find_package(yaml_cpp_vendor REQUIRED)
-find_package(tf2_geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+
+include_directories(
+  include
+)
+
+add_executable(control src/control.cpp src/arduino_comms.cpp)
+target_link_libraries(control ${SERIAL_LIBRARIES})
+ament_target_dependencies(control serial rclcpp)
+
+install(TARGETS
+  control
+  DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -34,10 +42,5 @@ if(BUILD_TESTING)
   #set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
-
-install(
-  DIRECTORY config description launch rviz 
-  DESTINATION share/${PROJECT_NAME}
-)
 
 ament_package()

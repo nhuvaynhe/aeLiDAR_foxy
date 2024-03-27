@@ -10,10 +10,6 @@ DiffDriveArduino::DiffDriveArduino()
     : logger_(rclcpp::get_logger("DiffDriveArduino"))
 {}
 
-
-
-
-
 return_type DiffDriveArduino::configure(const hardware_interface::HardwareInfo & info)
 {
   if (configure_default(info) != return_type::OK) {
@@ -141,13 +137,7 @@ hardware_interface::return_type DiffDriveArduino::write()
 
   arduino_.setMotorValues(motor_r_counts_per_loop, motor_l_counts_per_loop);
 
-
-
-
   return return_type::OK;
-
-
-  
 }
 
 

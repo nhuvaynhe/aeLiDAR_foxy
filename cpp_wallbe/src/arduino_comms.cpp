@@ -1,4 +1,4 @@
-#include "diffdrive_arduino/arduino_comms.h"
+#include "arduino_comms.h"
 // #include <ros/console.h>
 #include <rclcpp/rclcpp.hpp>
 #include <sstream>
@@ -12,6 +12,8 @@ void ArduinoComms::setup(const std::string &serial_device, int32_t baud_rate, in
     serial::Timeout tt = serial::Timeout::simpleTimeout(timeout_ms);
     serial_conn_.setTimeout(tt); // This should be inline except setTimeout takes a reference and so needs a variable
     serial_conn_.open();
+
+    std::cout << "Open com" << std::endl;
     // serial_conn_.(serial_device, baud_rate, serial::Timeout::simpleTimeout(timeout_ms));
 }
 

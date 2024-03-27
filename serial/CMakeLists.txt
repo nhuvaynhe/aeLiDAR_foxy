@@ -56,7 +56,7 @@ install(TARGETS ${PROJECT_NAME}
 )
 
 ## Install headers
-install(FILES include/serial/serial.h include/serial/v8stdint.h
+install(FILES include/serial/serial.h include/serial/v8stdint.h 
   DESTINATION include/serial)
 
 ## Tests

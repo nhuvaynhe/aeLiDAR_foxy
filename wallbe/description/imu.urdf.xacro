@@ -4,13 +4,13 @@
     <joint name="imu_joint" type="fixed">
         <parent link="base_link"/>
         <child link="imu_frame"/>
-        <origin xyz="0.09 0 0.081425" rpy="0 0 0"/>
+        <origin xyz="0.16 0 0.081425" rpy="0 0 0"/>
     </joint>
 
     <link name="imu_frame">
         <visual>
             <geometry>
-                <box size="0.0363 0.01755 0.005425"/>
+                <box size="0.024 0.012 0.005425"/>
             </geometry>
             <material name="green"/>
         </visual>

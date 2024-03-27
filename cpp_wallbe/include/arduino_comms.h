@@ -1,7 +1,7 @@
 #ifndef DIFFDRIVE_ARDUINO_ARDUINO_COMMS_H
 #define DIFFDRIVE_ARDUINO_ARDUINO_COMMS_H
 
-#include <serial/serial.h>
+#include "serial/serial.h"
 #include <cstring>
 
 class ArduinoComms
