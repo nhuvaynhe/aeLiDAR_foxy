@@ -19,14 +19,17 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(serial REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 include_directories(
   include
 )
 
-add_executable(control src/control.cpp src/arduino_comms.cpp)
+add_executable(control src/wheel.cpp src/control.cpp src/arduino_comms.cpp)
 target_link_libraries(control ${SERIAL_LIBRARIES})
-ament_target_dependencies(control serial rclcpp)
+ament_target_dependencies(control serial rclcpp std_msgs sensor_msgs geometry_msgs)
 
 install(TARGETS
   control
