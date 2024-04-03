@@ -16,80 +16,80 @@
 
 #define RAD2DEG(x) ((x)*180./M_PI)
 using namespace std::chrono_literals;
+using std::placeholders::_1;
+
 uint8_t state = 0;
 
-class ControlPublisher : public rclcpp::Node
+class WallbeBot : public rclcpp::Node
 {
     public:
-        ControlPublisher()
-        : Node("control_publisher")
+        geometry_msgs::msg::Twist twist;
+
+        WallbeBot()
+        : Node("wallbe_bot")
         {
-            publisher_  = this->create_publisher<geometry_msgs::msg::Twist>("cmd_vel", 1);
+            pub_  = this->create_publisher<geometry_msgs::msg::Twist>(
+            "/diffbot_base_controller/cmd_vel_unstamped", 10);
+
+            sub_  = this->create_subscription<sensor_msgs::msg::LaserScan>(
+            "scan", 10, std::bind(&WallbeBot::LiDARHandler, this, _1));
+
             timer_ = this->create_wall_timer(
-            500ms, std::bind(&ControlPublisher::timer_callback, this));
+            500ms, std::bind(&WallbeBot::checkState, this));
+
         }
     private:
-        void turnLeft();
-        void turnRight();
-        void moveBackward();
+        void move(float speed, float turn);
         void checkState();
+        void LiDARHandler(sensor_msgs::msg::LaserScan::SharedPtr scan);
 
-        void timer_callback() {
-            checkState();
-        }
         rclcpp::TimerBase::SharedPtr timer_;
-        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr publisher_;
+        rclcpp::Publisher<geometry_msgs::msg::Twist>::SharedPtr pub_;
+        rclcpp::Subscription<sensor_msgs::msg::LaserScan>::SharedPtr sub_;
 };
 
-void ControlPublisher::turnLeft() {
-    std::cout << "We're turning to the left..." << std::endl;
+void WallbeBot::move(float speed, float turn) {
+    this->twist.linear.x = speed;
+    this->twist.linear.y = 0;
+    this->twist.linear.z = 0;
+
+    this->twist.angular.x = 0;
+    this->twist.angular.y = 0;
+    this->twist.angular.z = turn;
 }
 
-void ControlPublisher::turnRight() {
-    std::cout << "We're turning to the right..." << std::endl;
-}
-
-void ControlPublisher::moveBackward() {
-    std::cout << "We're moving backward..." << std::endl;
-}
-
-void ControlPublisher::checkState() {
+void WallbeBot::checkState() {
     switch(state) {
         case 0: // No obstacles detected
             std::cout << "Clear, keep moving forward" << std::endl;
-            // setSpeed(20, 20);
+            this->move(0.15, 0);
             break;
         case 1: // Only left is blocked
             std::cout << "Left is blocked" << std::endl;
-            // setSpeed(20, 20);
             break;
         case 2: // Only right is blocked
             std::cout << "Right is blocked" << std::endl;
-            // setSpeed(20, 20);
             break;
         case 3: // Both left and right is blocked
             std::cout << "Both left and right are blocked" << std::endl;
-            // setSpeed(20, 20);
             break;
         case 4: // Forward is blocked
             std::cout << "Forward is blocked" << std::endl;
             break;
         case 5: // Forward and Left is blocked
-            this->turnRight();
             break;
         case 6: // Forward and Right is blocked
-            this->turnLeft();
             break;
         case 7: // Left, Right and Forward is blocked
-                this->moveBackward();
-                break;
+            break;
         default:
             std::cout << "Unknown state!!!" << std::endl;
             break;
     }
+    pub_->publish(this->twist);
 }
 
-static void LiDARHandler(sensor_msgs::msg::LaserScan::SharedPtr scan) {
+void WallbeBot::LiDARHandler(sensor_msgs::msg::LaserScan::SharedPtr scan) {
     /*
      * The car has 4 state:
      *  - 0: No obstacles
@@ -109,7 +109,6 @@ static void LiDARHandler(sensor_msgs::msg::LaserScan::SharedPtr scan) {
     for (int i = 0; i < count; i++) {
         float degree = RAD2DEG(scan->angle_min + scan->angle_increment * i);
         float distance = scan->ranges[i];
-        std::cout << "Distance: " << distance << std::endl;
         // lidar_scan[i].first = degree;
         // lidar_scan[i].second = distance;
 
@@ -131,15 +130,7 @@ static void LiDARHandler(sensor_msgs::msg::LaserScan::SharedPtr scan) {
 
 int main(int argc, char **argv) {
     rclcpp::init(argc, argv);
-
-    auto node = rclcpp::Node::make_shared("rplidar_client");
-
-    auto lidar_info_sub = node->create_subscription<sensor_msgs::msg::LaserScan>(
-                    "scan", rclcpp::SensorDataQoS(), LiDARHandler);
-
-    rclcpp::spin(node);
-    rclcpp::spin(std::make_shared<ControlPublisher>());
+    rclcpp::spin(std::make_shared<WallbeBot>());
     rclcpp::shutdown();
-
     return 0;
 }
